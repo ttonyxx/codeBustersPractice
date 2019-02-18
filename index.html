@@ -46,8 +46,12 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 			justify-content: center;
 		}
 
-		p {
+		#num-letter {
 			font-size: 35vh;
+		}
+
+		p {
+			font-size: 10vh;
 		}
 
 		.container {
@@ -62,12 +66,19 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 		}
 
 		#correct {
-			position: absolute; 
-			left: 32%;
+			position: absolute;
+			left: 50%;
+			margin-left: -32vh;
 			top: 7vh;
 			font-size: 20vh;
 			z-index: -1;
 			color: green;
+		}
+
+		#timer {
+			margin-top: 3vh;
+			color: rgb(61, 130, 51);
+			display: none;
 		}
 
 		</style>
@@ -88,6 +99,10 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 		        <a class="mdl-navigation__link" href="">Number - Letter</a>
 		        <a class="mdl-navigation__link" href="">Modular Inverse</a>
 		        <a class="mdl-navigation__link" href="">Atbash</a>
+		        <a class="mdl-navigation__link" href=""><label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
+				  <input type="checkbox" id="switch-1" class="mdl-switch__input" data-checked="1" checked>
+				  <span class="mdl-switch__label"></span>
+				</label></a>
 		      </nav>
 		    </div>
 		  </header>
@@ -97,36 +112,60 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 		        <a class="mdl-navigation__link" href="">Number - Letter</a>
 		        <a class="mdl-navigation__link" href="">Modular Inverse</a>
 		        <a class="mdl-navigation__link" href="">Atbash</a>
+		        
 		    </nav>
 		  </div>
 		  <main class="mdl-layout__content">
 		    <div class="page-content">
 
-		    	<p id="correct">Correct</p>
-		    	
+		    	<p id="correct" style="display: none">Correct</p>
+
 		    	<div class="container">
 			    	<div class="box"><p id="num-letter">5</p></div>
 		    	</div>
 
-		    	<center><p style="width: 28%; margin-top: 3vh">
+		    	<center><div style="width: 28%; margin-top: 3vh" id="slider-option">
 					<input class="mdl-slider mdl-js-slider" type="range" id="response" min="0" max="25" value="0" step="1">
 					<br>
 					<p id="response-text" style="font-size: 20vh; margin-top: 5vh;">A</p>
-				</p></center>
-		    	
+				</div></center>
 
+				<center><div style="width: 28%; margin-top: 3vh; display: none;" id="input-option">
+					<form action="#">
+					  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+					    <input class="mdl-textfield__input" type="text" autocomplete="off" id="response-input">
+					    <label class="mdl-textfield__label" for="sample3">Answer</label>
+					  </div>
+					</form>
+					<br>
+					<!--<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">GO</button>-->
+				</div></center>
+
+				<center>
+					<p id="timer">0.00</p>
+				</center>
+		    	
 		    </div>
+
+
 		  </main>
 		</div>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="timer.js"></script>
 		<script type="text/javascript">
 
 			var randInt;
+			var first = true;
+			var problemsFinished = 0;
 
 			function start() {
 				reset();
-				$('#correct').hide();
+				//alert(localStorage.mode);
+				if(localStorage.mode) {
+					$('#switch-1').data('checked', localStorage.mode);
+					$('#switch-1').trigger("change");
+				}
 			}
 
 			function reset() {
@@ -135,19 +174,70 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 				animateCSS('#num-letter', 'bounceIn');
 			}
 
+			$('#switch-1').change(function() {
+				if ($('#switch-1').data('checked') == "1") {
+					$('#switch-1').data('checked', "0");
+					$('#input-option').show();
+					$('#slider-option').hide();
+					localStorage.mode = "1";
+					$('#timer').css('margin-top', '3vh');
+				} else {
+					$('#switch-1').data('checked', "1");
+					$('#input-option').hide();
+					$('#slider-option').show();
+					localStorage.mode = "0";
+					$('#timer').css('margin-top', '10vh');
+				}
+			});
+
+			$('#response-input').change(function() {
+
+				if(String.fromCharCode(randInt+65) == $('#response-input').val().toUpperCase()) {
+					$('#correct').html("Correct");
+				  	correct();
+				  	$('#response-input').val("");
+				} else {
+					$('#correct').html("Wrong");
+					correct();
+				}
+				checkFirst();
+
+			});
+
 			$('#response').change(function() {
 
 				animateSpeed('#response-text', 'fadeOutUp', 'faster', () => animateSpeed('#response-text', 'fadeInDown', 'faster'));
 				$('#response-text').html(String.fromCharCode(parseInt($('#response').val())+65));
 				if(randInt == parseInt($('#response').val())) {
-				  	$('#correct').show();
-				  	animateCSS('#correct', 'bounceIn', () => {
-				  		animateCSS('#correct', 'bounceOut')
-				  		$('#correct').hide();
-				  	});
-					reset();
+					$('#correct').html("Correct");
+				  	correct();
 				}
+				checkFirst();
+				
 			});
+
+			function checkFirst() {
+				if(first) {
+					$('#timer').show();
+					animateSpeed('#timer', 'fadeIn', 'slow');
+					startTimer();
+					first = false;
+				}
+				problemsFinished++;
+				if(problemsFinished == 50) {
+					stop();
+					first = true;
+				}
+			}
+
+			function correct() {
+				$('#correct').show();
+			  	animateCSS('#correct', 'bounceIn', () => {
+			  		animateCSS('#correct', 'bounceOut')
+			  		$('#correct').hide();
+			  	});
+				reset();
+			}
 
 			function animateCSS(element, animationName, callback) {
 			    const node = document.querySelector(element)
