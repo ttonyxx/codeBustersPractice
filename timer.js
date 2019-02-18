@@ -34,7 +34,6 @@ function count(){
 }
 
 function startTimer(){
-    alert("starting");
     if (running) {
         interval = setInterval(count, 10); 
     }
