@@ -81,6 +81,18 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 			display: none;
 		}
 
+		#result {
+			position: absolute;
+			background-color: black;
+			opacity: 0.7;
+			width: 40%;
+			height: 35vh;
+			border-radius: 5vh;
+			top: 26vh;
+			left: 30%;
+			display: none;
+		}
+
 		</style>
 
 	</head>
@@ -144,6 +156,14 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 				<center>
 					<p id="timer">0.00</p>
 				</center>
+
+				<div id="result">
+					<p id="result-text" style="color: white; margin-top: 3vh; font-size: 5vh; line-height: 7vh;">Score: 0/50<br>Final Time: 0.00s<br>Time per Question: 0.00s</p>
+					<!-- Accent-colored raised button with ripple -->
+					<button id="restart" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+					  Restart
+					</button>
+				</div>
 		    	
 		    </div>
 
@@ -158,6 +178,7 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 			var randInt;
 			var first = true;
 			var problemsFinished = 0;
+			var problemsCorrect = 0;
 
 			function start() {
 				reset();
@@ -195,11 +216,12 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 				if(String.fromCharCode(randInt+65) == $('#response-input').val().toUpperCase()) {
 					$('#correct').html("Correct");
 				  	correct();
-				  	$('#response-input').val("");
+				  	problemsCorrect++;
 				} else {
 					$('#correct').html("Wrong");
 					correct();
 				}
+				$('#response-input').val("");
 				checkFirst();
 
 			});
@@ -211,22 +233,45 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 				if(randInt == parseInt($('#response').val())) {
 					$('#correct').html("Correct");
 				  	correct();
+				  	problemsCorrect++;
 				}
 				checkFirst();
 				
 			});
 
+			$('#restart').click(function() {
+				animateCSS('#result', 'fadeOutUp');
+				$('#result').hide();
+				if(localStorage.mode == "0") {
+					$('#response').show();
+					animateCSS('#response', 'fadeIn');
+				} else {
+					$('#response-input').show();
+					animateCSS('#response-input', 'fadeIn');
+				}
+			});
+
 			function checkFirst() {
 				if(first) {
 					$('#timer').show();
+					restart();
 					animateSpeed('#timer', 'fadeIn', 'slow');
 					startTimer();
 					first = false;
+					problemsCorrect = 0;
+					problemsFinished = 0;
 				}
 				problemsFinished++;
+				console.log(problemsFinished);
 				if(problemsFinished == 50) {
 					stop();
+					animateSpeed('#timer', 'fadeOut', 'slow', () => $('#timer').hide());
 					first = true;
+					$('#result-text').html("Score: " + problemsCorrect + "/50<br>Final Time: " + $('#timer').html() + "s<br>Time per Question " + parseFloat($('#timer').html())/50 + "s");
+					$('#result').show();
+					animateCSS('#result', 'fadeInDown');
+					$('#response-input').hide();
+					$('#response').hide();
 				}
 			}
 
