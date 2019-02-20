@@ -100,7 +100,7 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 	<body onload="start()">
 
 		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-		  <header class="mdl-layout__header">
+		  <header class="mdl-layout__header mdl-layout__header--waterfall">
 		    <div class="mdl-layout__header-row">
 		      <!-- Title -->
 		      <span class="mdl-layout-title">Code Busters Practice</span>
@@ -108,7 +108,7 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 		      <div class="mdl-layout-spacer"></div>
 		      <!-- Navigation. We hide it in small screens. -->
 		      <nav class="mdl-navigation mdl-layout--large-screen-only">
-		        <a class="mdl-navigation__link" href="">Number - Letter</a>
+		        <a class="mdl-navigation__link is-active" href="">Number - Letter</a>
 		        <a class="mdl-navigation__link" href="">Modular Inverse</a>
 		        <a class="mdl-navigation__link" href="">Atbash</a>
 		        <a class="mdl-navigation__link" href=""><label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
@@ -267,7 +267,7 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 					stop();
 					animateSpeed('#timer', 'fadeOut', 'slow', () => $('#timer').hide());
 					first = true;
-					$('#result-text').html("Score: " + problemsCorrect + "/50<br>Final Time: " + $('#timer').html() + "s<br>Time per Question " + parseFloat($('#timer').html())/50 + "s");
+					$('#result-text').html("Score: " + problemsCorrect + "/50<br>Final Time: " + $('#timer').html() + "s<br>Time per Question " + timeToNum($('#timer').html())/50 + "s");
 					$('#result').show();
 					animateCSS('#result', 'fadeInDown');
 					$('#response-input').hide();
@@ -282,6 +282,19 @@ background: linear-gradient(to right, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, F
 			  		$('#correct').hide();
 			  	});
 				reset();
+			}
+
+			function timeToNum(timeText) {
+				var time = timeText.split(":");
+				var timeNum = 0;
+				var i;
+				var count = 1;
+				timeNum += parseFloat(time[time.length-1]) * 0.01;
+				timeNum += parseFloat(time[time.length-2]);
+				if(time.length == 3) {
+					timeNum += parseFloat(time[time.length-3]) * 60;
+				}
+				return Math.round(timeNum*100)/100;
 			}
 
 			function animateCSS(element, animationName, callback) {
