@@ -34,7 +34,7 @@
 
 		.box {
 			opacity: 0.5;
-			width: 50vh;
+			width: 60%;
 			height: 50vh;
 			min-width: 60px;
 			float: left;
@@ -46,8 +46,8 @@
 			justify-content: center;
 		}
 
-		#num-letter {
-			font-size: 35vh;
+		#adding-letter {
+			font-size: 17vw;
 		}
 
 		p {
@@ -97,7 +97,7 @@
 
 	</head>
 
-	<body onload="start()">
+	<body onload="reset()">
 
 		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 		  <header class="mdl-layout__header mdl-layout__header--waterfall green-gradient">
@@ -109,7 +109,7 @@
 		      <!-- Navigation. We hide it in small screens. -->
 		      <nav class="mdl-navigation mdl-layout--large-screen-only">
 		        <a class="mdl-navigation__link is-active" href="index.html">Number - Letter</a>
-		        <a class="mdl-navigation__link" href="vigenere.html">Vigenère</a>
+		        <a class="mdl-navigation__link" href="viginere.html">Viginère</a>
 		        <a class="mdl-navigation__link" href=""><label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
 				  <input type="checkbox" id="switch-1" class="mdl-switch__input" data-checked="1" checked>
 				  <span class="mdl-switch__label"></span>
@@ -130,16 +130,10 @@
 		    	<p id="correct" style="display: none">Correct</p>
 
 		    	<div class="container">
-			    	<div class="box"><p id="num-letter"></p></div>
+			    	<div class="box"><p id="adding-letter"></p></div>
 		    	</div>
 
-		    	<center><div style="width: 28%; margin-top: 3vh" id="slider-option">
-					<input class="mdl-slider mdl-js-slider" type="range" id="response" min="0" max="25" value="0" step="1">
-					<br>
-					<p id="response-text" style="font-size: 20vh; margin-top: 5vh;">A</p>
-				</div></center>
-
-				<center><div style="width: 28%; margin-top: 3vh; display: none;" id="input-option">
+				<center><div style="width: 28%; margin-top: 3vh;" id="input-option">
 					<form action="#">
 					  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 					    <input class="mdl-textfield__input" type="text" autocomplete="off" id="response-input">
@@ -161,9 +155,8 @@
 					  Restart
 					</button>
 				</div>
-		    	
-		    </div>
 
+		    </div>
 
 		  </main>
 		</div>
@@ -172,46 +165,24 @@
 		<script src="timer.js"></script>
 		<script type="text/javascript">
 
-			var randInt;
+			var randChar1, randChar2;
+			var randInt1, randInt2;
 			var first = true;
 			var problemsFinished = 0;
 			var problemsCorrect = 0;
 
-			function start() {
-				reset();
-				//alert(localStorage.mode);
-				if(localStorage.mode) {
-					$('#switch-1').data('checked', localStorage.mode);
-					$('#switch-1').trigger("change");
-				}
-
-			}
-
 			function reset() {
-				randInt = Math.floor(Math.random() * 26);
-				$('#num-letter').html(randInt);
-				animateCSS('#num-letter', 'bounceIn');
+				randInt1 = Math.floor(Math.random() * 26) + 65;
+				randInt2 = Math.floor(Math.random() * 26) + 65;
+				randChar1 = String.fromCharCode(randInt1).charAt(0);
+				randChar2 = String.fromCharCode(randInt2).charAt(0);
+				$('#adding-letter').html(randChar1 + " + " + randChar2);
+				animateCSS('#adding-letter', 'bounceIn');
 			}
-
-			$('#switch-1').change(function() {
-				if ($('#switch-1').data('checked') == "1") {
-					$('#switch-1').data('checked', "0");
-					$('#input-option').show();
-					$('#slider-option').hide();
-					localStorage.mode = "1";
-					$('#timer').css('margin-top', '3vh');
-				} else {
-					$('#switch-1').data('checked', "1");
-					$('#input-option').hide();
-					$('#slider-option').show();
-					localStorage.mode = "0";
-					$('#timer').css('margin-top', '10vh');
-				}
-			});
 
 			$('#response-input').change(function() {
 
-				if(String.fromCharCode(randInt+65) == $('#response-input').val().toUpperCase()) {
+				if(String.fromCharCode((randInt1 + randInt2 - 130)%26+65) == $('#response-input').val().toUpperCase()) {
 					$('#correct').html("Correct");
 					$('.box').css("background-color", "white");
 					$('.box').css("opacity", "0.5");
@@ -226,19 +197,6 @@
 				$('#response-input').val("");
 				checkFirst();
 
-			});
-
-			$('#response').change(function() {
-
-				animateSpeed('#response-text', 'fadeOutUp', 'faster', () => animateSpeed('#response-text', 'fadeInDown', 'faster'));
-				$('#response-text').html(String.fromCharCode(parseInt($('#response').val())+65));
-				if(randInt == parseInt($('#response').val())) {
-					$('#correct').html("Correct");
-				  	correct();
-				  	problemsCorrect++;
-				}
-				checkFirst();
-				
 			});
 
 			$('#restart').click(function() {
@@ -332,9 +290,9 @@
 			    node.addEventListener('animationend', handleAnimationEnd)
 			}
 
+
 		</script>
 
 	</body>
 
 </html>
-
