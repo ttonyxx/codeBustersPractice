@@ -281,7 +281,9 @@
 					animateSpeed('#timer', 'fadeIn', 'slow');
 					startTimer();
 					first = false;
-					problemsCorrect = 0;
+					if(problemsCorrect != 1) {
+						problemsCorrect = 0;
+					}
 					problemsFinished = 0;
 				}
 				problemsFinished++;
