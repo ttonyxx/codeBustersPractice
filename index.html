@@ -211,7 +211,11 @@
 
 			function reset() {
 				randInt = Math.floor(Math.random() * 26);
-				$('#num-letter').html(randInt);
+				if(Math.random() > 0.5) {
+					$('#num-letter').html(randInt);
+				} else {
+					$('#num-letter').html(String.fromCharCode(randInt+65));
+				}
 				animateCSS('#num-letter', 'bounceIn');
 			}
 
@@ -233,7 +237,7 @@
 
 			$('#response-input').change(function() {
 
-				if(String.fromCharCode(randInt+65) == $('#response-input').val().toUpperCase()) {
+				if(String.fromCharCode(randInt+65) == $('#response-input').val().toUpperCase() || randInt == parseInt($('#response-input').val())) {
 					$('#correct').html("Correct");
 					$('.box').css("background-color", "white");
 					$('.box').css("opacity", "0.5");
@@ -291,7 +295,7 @@
 					stop();
 					animateSpeed('#timer', 'fadeOut', 'slow', () => $('#timer').hide());
 					first = true;
-					$('#result-text').html("Score: " + problemsCorrect + "/50<br>Final Time: " + $('#timer').html() + "s<br>Time per Question: " + timeToNum($('#timer').html())/50 + "s");
+					$('#result-text').html("Score: " + problemsCorrect + "/50<br>Final Time: " + $('#timer').html() + "s<br>Time per Question: " + Math.round(timeToNum($('#timer').html())*1000)/50000 + "s");
 					$('#result').show();
 					animateCSS('#result', 'fadeInDown');
 					$('#response-input').hide();
