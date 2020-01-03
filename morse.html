@@ -53,7 +53,7 @@
 
 		.box {
 			opacity: 0.5;
-			width: 50vh;
+			width: 80vh;
 			height: 50vh;
 			min-width: 60px;
 			float: left;
@@ -65,8 +65,8 @@
 			justify-content: center;
 		}
 
-		#num-letter {
-			font-size: 35vh;
+		#morsecode {
+			font-size: 15vh;
 		}
 
 		p {
@@ -151,7 +151,7 @@
 		    	<p id="correct" style="display: none">Correct</p>
 
 		    	<div class="container">
-			    	<div class="box"><p id="num-letter"></p></div>
+			    	<div class="box"><p id="morsecode"></p></div>
 		    	</div>
 
 		    	<center><div style="width: 28%; margin-top: 3vh" id="slider-option">
@@ -197,12 +197,14 @@
 			var first = true;
 			var problemsFinished = 0;
 			var problemsCorrect = 0;
+			var morseArray = ["• —", "— • • •", "— • — •", "— • •", "•", "• • — •", "— — •", "• • • •", "• •", "• — — —", "— • —", "• — • •", "— —", "— •", "— — —", "• — — •", "— — • —", "• — •", "• • •", "—", "• • —", "• • • —", "• — —", "— • • —", "— • — —", "— — • •"];
+			var alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
 			function start() {
+				$('#input-option').show();
+				$('#slider-option').hide();
 				reset();
 				//alert(localStorage.mode);
-				$('#switch-1').data('checked', 1);
-				$('#switch-1').trigger("change");
 				/*
 				if(localStorage.mode) {
 					$('#switch-1').data('checked', localStorage.mode);
@@ -213,33 +215,13 @@
 
 			function reset() {
 				randInt = Math.floor(Math.random() * 26);
-				if(Math.random() > 0.5) {
-					$('#num-letter').html(randInt);
-				} else {
-					$('#num-letter').html(String.fromCharCode(randInt+65));
-				}
-				animateCSS('#num-letter', 'bounceIn');
+				$('#morsecode').html(morseArray[randInt]);
+				animateCSS('#morsecode', 'bounceIn');
 			}
-
-			$('#switch-1').change(function() {
-				if ($('#switch-1').data('checked') == "1") {
-					$('#switch-1').data('checked', "0");
-					$('#input-option').show();
-					$('#slider-option').hide();
-					localStorage.mode = "1";
-					$('#timer').css('margin-top', '3vh');
-				} else {
-					$('#switch-1').data('checked', "1");
-					$('#input-option').hide();
-					$('#slider-option').show();
-					localStorage.mode = "0";
-					$('#timer').css('margin-top', '10vh');
-				}
-			});
 
 			$('#response-input').change(function() {
 
-				if(String.fromCharCode(randInt+65) == $('#response-input').val().toUpperCase() || randInt == parseInt($('#response-input').val())) {
+				if(alphabet[randInt] == $('#response-input').val().toLowerCase()) {
 					$('#correct').html("Correct");
 					$('.box').css("background-color", "white");
 					$('.box').css("opacity", "0.5");
@@ -251,6 +233,7 @@
 					$('.box').css("opacity", "0.7");
 					showCorrect();
 				}
+					console.log(alphabet[randInt] + " " + $('#response-input').val().toLowerCase());
 				$('#response-input').val("");
 				checkFirst();
 
