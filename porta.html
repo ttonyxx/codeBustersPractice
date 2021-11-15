@@ -118,39 +118,39 @@
 
 	<body onload="reset()">
 
-		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-			<header class="mdl-layout__header mdl-layout__header--waterfall green-gradient">
-				<div class="mdl-layout__header-row">
-				  <!-- Title -->
-				  <span class="mdl-layout-title">Code Busters Practice</span>
-				  <!-- Add spacer, to align navigation to the right -->
-				  <div class="mdl-layout-spacer"></div>
-				  <!-- Navigation. We hide it in small screens. -->
-				  <nav class="mdl-navigation mdl-layout--large-screen-only">
-					<a class="mdl-navigation__link is-active" href="index.html">Number - Letter</a>
-					<a class="mdl-navigation__link" href="vigenere.html">Vigenère</a>
-					<a class="mdl-navigation__link" href="porta.html">Porta</a>
-					<a class="mdl-navigation__link" href="morse.html">Morse</a>
-                    <a class="mdl-navigation__link" href="baconian.html">Baconian</a>
-
-					<a class="mdl-navigation__link" href=""><label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
-					  <input type="checkbox" id="switch-1" class="mdl-switch__input" data-checked="1" checked>
-					  <span class="mdl-switch__label"></span>
-					</label></a>
-				  </nav>
-				</div>
-			  </header>
-			  <div class="mdl-layout__drawer">
-				<span class="mdl-layout-title">Code Busters</span>
-				<nav class="mdl-navigation">
-					<a class="mdl-navigation__link" href="index.html">Number - Letter</a>
-					<a class="mdl-navigation__link" href="vigenere.html">Vigenère</a>
-					<a class="mdl-navigation__link" href="porta.html">Porta</a>
-					<a class="mdl-navigation__link" href="morse.html">Morse</a>
-                    <a class="mdl-navigation__link" href="baconian.html">Baconian</a>
-					
-				</nav>
-			  </div>
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+				<header class="mdl-layout__header mdl-layout__header--waterfall green-gradient">
+					<div class="mdl-layout__header-row">
+					  <!-- Title -->
+					  <span class="mdl-layout-title">Code Busters Practice</span>
+					  <!-- Add spacer, to align navigation to the right -->
+					  <div class="mdl-layout-spacer"></div>
+					  <!-- Navigation. We hide it in small screens. -->
+					  <nav class="mdl-navigation mdl-layout--large-screen-only">
+						<a class="mdl-navigation__link is-active" href="index.html">Number - Letter</a>
+						<a class="mdl-navigation__link" href="vigenere.html">Vigenère</a>
+						<a class="mdl-navigation__link" href="porta.html">Porta</a>
+						<a class="mdl-navigation__link" href="morse.html">Morse</a>
+						<a class="mdl-navigation__link" href="baconian.html">Baconian</a>
+	
+						<a class="mdl-navigation__link" href=""><label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
+						  <input type="checkbox" id="switch-1" class="mdl-switch__input" data-checked="1" checked>
+						  <span class="mdl-switch__label"></span>
+						</label></a>
+					  </nav>
+					</div>
+				  </header>
+				  <div class="mdl-layout__drawer">
+					<span class="mdl-layout-title">Code Busters</span>
+					<nav class="mdl-navigation">
+						<a class="mdl-navigation__link" href="index.html">Number - Letter</a>
+						<a class="mdl-navigation__link" href="vigenere.html">Vigenère</a>
+						<a class="mdl-navigation__link" href="porta.html">Porta</a>
+						<a class="mdl-navigation__link" href="morse.html">Morse</a>
+						<a class="mdl-navigation__link" href="baconian.html">Baconian</a>
+						
+              </nav>
+            </div>
 		  <main class="mdl-layout__content green-gradient" id="content">
 		    <div class="page-content">
 
@@ -209,12 +209,12 @@
 
 			$('#response-input').change(function() {
 
-				if(String.fromCharCode((randInt1 + randInt2 - 130)%26+65) == $('#response-input').val().toUpperCase()) {
+				if(String.fromCharCode(((Math.floor(randInt1/2) + 13)%26 + randInt2)%26 + 65) == $('#response-input').val().toUpperCase()) {
 					$('#correct').html("Correct");
 					$('.box').css("background-color", "white");
 					$('.box').css("opacity", "0.5");
 				  	correct();
-				  	problemsCorrect++;
+				  	problemsCorrect++;  
 				} else {
 					$('#correct').html("Wrong");
 					$('.box').css("background-color", "red");
@@ -235,6 +235,7 @@
 					$('#response-input').show();
 					animateCSS('#response-input', 'fadeIn');
 				}
+
 			});
 
 			function checkFirst() {

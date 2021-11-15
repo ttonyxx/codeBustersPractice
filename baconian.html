@@ -53,7 +53,7 @@
 
 		.box {
 			opacity: 0.5;
-			width: 60%;
+			width: 80vh;
 			height: 50vh;
 			min-width: 60px;
 			float: left;
@@ -65,8 +65,8 @@
 			justify-content: center;
 		}
 
-		#adding-letter {
-			font-size: 17vw;
+		#morsecode {
+			font-size: 15vh;
 		}
 
 		p {
@@ -116,7 +116,7 @@
 
 	</head>
 
-	<body onload="reset()">
+	<body onload="start()">
 
 		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 			<header class="mdl-layout__header mdl-layout__header--waterfall green-gradient">
@@ -148,6 +148,7 @@
 					<a class="mdl-navigation__link" href="porta.html">Porta</a>
 					<a class="mdl-navigation__link" href="morse.html">Morse</a>
                     <a class="mdl-navigation__link" href="baconian.html">Baconian</a>
+
 					
 				</nav>
 			  </div>
@@ -157,10 +158,16 @@
 		    	<p id="correct" style="display: none">Correct</p>
 
 		    	<div class="container">
-			    	<div class="box"><p id="adding-letter"></p></div>
+			    	<div class="box"><p id="morsecode"></p></div>
 		    	</div>
 
-				<center><div style="width: 28%; margin-top: 3vh;" id="input-option">
+		    	<center><div style="width: 28%; margin-top: 3vh" id="slider-option">
+					<input class="mdl-slider mdl-js-slider" type="range" id="response" min="0" max="25" value="0" step="1">
+					<br>
+					<p id="response-text" style="font-size: 20vh; margin-top: 5vh;">A</p>
+				</div></center>
+
+				<center><div style="width: 28%; margin-top: 3vh; display: none;" id="input-option">
 					<form action="#">
 					  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 					    <input class="mdl-textfield__input" type="text" autocomplete="off" id="response-input">
@@ -182,8 +189,9 @@
 					  Restart
 					</button>
 				</div>
-
+		    	
 		    </div>
+
 
 		  </main>
 		</div>
@@ -192,24 +200,35 @@
 		<script src="timer.js"></script>
 		<script type="text/javascript">
 
-			var randChar1, randChar2;
-			var randInt1, randInt2;
+			var randInt;
 			var first = true;
 			var problemsFinished = 0;
 			var problemsCorrect = 0;
+			var baconArray = ["AAAAA", "AAAAB", "AAABA", "AAABB", "AABAA", "AABAB", "AABBA", "AABBB", "ABAAA (1)", "ABAAA (2)", "ABAAB", "ABABA", "ABABB", "ABBAA", "ABBAB", "ABBBA", "ABBBB", "BAAAA", "BAAAB", "BAABA", "BAABB (1)","BAABB (2)", "BABAA", "BABAB", "BABBA", "BABBB"];
+			var alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+
+			function start() {
+				$('#input-option').show();
+				$('#slider-option').hide();
+				reset();
+				//alert(localStorage.mode);
+				/*
+				if(localStorage.mode) {
+					$('#switch-1').data('checked', localStorage.mode);
+					$('#switch-1').trigger("change");
+				}*/
+
+			}
 
 			function reset() {
-				randInt1 = Math.floor(Math.random() * 26) + 65;
-				randInt2 = Math.floor(Math.random() * 26) + 65;
-				randChar1 = String.fromCharCode(randInt1).charAt(0);
-				randChar2 = String.fromCharCode(randInt2).charAt(0);
-				$('#adding-letter').html(randChar1 + " + " + randChar2);
-				animateCSS('#adding-letter', 'bounceIn');
+				randInt = Math.floor(Math.random() * 26);
+				$('#morsecode').html(baconArray[randInt]);
+				animateCSS('#morsecode', 'bounceIn');
 			}
 
 			$('#response-input').change(function() {
 
-				if(String.fromCharCode((randInt1 + randInt2 - 130)%26+65) == $('#response-input').val().toUpperCase()) {
+				if(alphabet[randInt] == $('#response-input').val().toLowerCase()) {
 					$('#correct').html("Correct");
 					$('.box').css("background-color", "white");
 					$('.box').css("opacity", "0.5");
@@ -221,9 +240,23 @@
 					$('.box').css("opacity", "0.7");
 					showCorrect();
 				}
+					console.log(alphabet[randInt] + " " + $('#response-input').val().toLowerCase());
 				$('#response-input').val("");
 				checkFirst();
 
+			});
+
+			$('#response').change(function() {
+
+				animateSpeed('#response-text', 'fadeOutUp', 'faster', () => animateSpeed('#response-text', 'fadeInDown', 'faster'));
+				$('#response-text').html(String.fromCharCode(parseInt($('#response').val())+65));
+				if(randInt == parseInt($('#response').val())) {
+					$('#correct').html("Correct");
+				  	problemsCorrect++;
+				  	correct();
+				}
+				checkFirst();
+				
 			});
 
 			$('#restart').click(function() {
@@ -244,16 +277,17 @@
 					animateSpeed('#timer', 'fadeIn', 'slow');
 					startTimer();
 					first = false;
-					problemsCorrect = 0;
+					if(problemsCorrect != 1) {
+						problemsCorrect = 0;
+					}
 					problemsFinished = 0;
 				}
 				problemsFinished++;
-				console.log(problemsFinished);
 				if(problemsFinished == 50) {
 					stop();
 					animateSpeed('#timer', 'fadeOut', 'slow', () => $('#timer').hide());
 					first = true;
-					$('#result-text').html("Score: " + problemsCorrect + "/50<br>Final Time: " + $('#timer').html() + "s<br>Time per Question: " + timeToNum($('#timer').html())/50 + "s");
+					$('#result-text').html("Score: " + problemsCorrect + "/50<br>Final Time: " + $('#timer').html() + "s<br>Time per Question: " + Math.round(timeToNum($('#timer').html())*1000)/50000 + "s");
 					$('#result').show();
 					animateCSS('#result', 'fadeInDown');
 					$('#response-input').hide();
@@ -317,9 +351,9 @@
 			    node.addEventListener('animationend', handleAnimationEnd)
 			}
 
-
 		</script>
 
 	</body>
 
 </html>
+
